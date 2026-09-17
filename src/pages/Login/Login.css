@@ -1,0 +1,165 @@
+.login-page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2rem;
+
+  background: var(--background);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+
+/* Header */
+
+.login-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-logo {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 1rem;
+
+  border-radius: 8px;
+
+  background: var(--primary);
+  color: var(--primary-foreground);
+
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.login-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+
+  letter-spacing: -0.025em;
+}
+
+.login-header p {
+  margin-top: 0.4rem;
+
+  color: var(--muted-foreground);
+
+  font-size: 0.875rem;
+}
+
+
+/* Card */
+
+.login-card {
+  padding: 1.5rem;
+
+  background: var(--card);
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 5%);
+}
+
+
+/* Form */
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 0.45rem;
+
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+
+/* Password */
+
+.password-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 0.45rem;
+}
+
+.password-header label {
+  margin-bottom: 0;
+}
+
+.password-header a {
+  color: var(--muted-foreground);
+
+  font-size: 0.75rem;
+
+  transition: color 150ms ease;
+}
+
+.password-header a:hover {
+  color: var(--foreground);
+}
+
+
+/* Remember me */
+
+.remember-row {
+  margin: 0.25rem 0 1.25rem;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 0.5rem;
+
+  color: var(--muted-foreground);
+
+  font-size: 0.875rem;
+
+  cursor: pointer;
+}
+
+.checkbox-label input {
+  width: 14px;
+  height: 14px;
+
+  accent-color: var(--primary);
+
+  cursor: pointer;
+}
+
+
+/* Login button */
+
+.login-button {
+  width: 100%;
+}
+
+
+/* Footer */
+
+.login-footer {
+  margin-top: 1.5rem;
+
+  text-align: center;
+
+  color: var(--muted-foreground);
+
+  font-size: 0.75rem;
+}

@@ -1,0 +1,149 @@
+/* Buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 2.25rem;
+  padding: 0 0.75rem;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+
+  font-size: 0.875rem;
+  font-weight: 500;
+
+  white-space: nowrap;
+
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.btn-primary:hover {
+  background: #27272a;
+}
+
+.btn-secondary {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+.btn-secondary:hover {
+  background: #e4e4e7;
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--foreground);
+}
+
+.btn-outline:hover {
+  background: var(--muted);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted-foreground);
+}
+
+.btn-ghost:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+
+/* Cards */
+
+.card {
+  background: var(--card);
+  color: var(--card-foreground);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  padding: 1.25rem;
+
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 4%);
+}
+
+/* Inputs */
+
+.input {
+  width: 100%;
+  height: 2.25rem;
+
+  padding: 0 0.75rem;
+
+  background: var(--background);
+  color: var(--foreground);
+
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+
+  outline: none;
+
+  font-size: 0.875rem;
+
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.input:focus {
+  border-color: var(--ring);
+
+  box-shadow:
+    0 0 0 2px rgb(24 24 27 / 8%);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: var(--secondary);
+  color: var(--foreground);
+
+  border: 1px solid var(--border);
+
+  font-weight: 600;
+}
+
+.avatar-sm {
+  width: 30px;
+  height: 30px;
+
+  font-size: 0.7rem;
+}
+
+.avatar-md {
+  width: 36px;
+  height: 36px;
+
+  font-size: 0.8rem;
+}
+
+.avatar-lg {
+  width: 42px;
+  height: 42px;
+
+  font-size: 0.9rem;
+}

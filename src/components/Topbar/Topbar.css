@@ -1,0 +1,174 @@
+.topbar {
+  position: fixed;
+
+  top: 0;
+  right: 0;
+  left: 240px;
+
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 1.5rem;
+
+  background: rgb(255 255 255 / 95%);
+
+  border-bottom: 1px solid var(--border);
+
+  backdrop-filter: blur(8px);
+
+  z-index: 90;
+}
+
+
+/* Page title */
+
+.topbar-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  letter-spacing: -0.01em;
+}
+
+.topbar-subtitle {
+  margin-top: 1px;
+
+  color: var(--muted-foreground);
+
+  font-size: 0.7rem;
+}
+
+
+/* Right side */
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+
+  gap: 0.25rem;
+}
+
+
+/* Icon buttons */
+
+.topbar-button {
+  position: relative;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+
+  background: transparent;
+
+  color: var(--muted-foreground);
+
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.topbar-button svg {
+  width: 17px;
+  height: 17px;
+
+  stroke-width: 1.8;
+}
+
+.topbar-button:hover {
+  background: var(--muted);
+
+  color: var(--foreground);
+}
+
+
+/* Notification */
+
+.notification-dot {
+  position: absolute;
+
+  top: 7px;
+  right: 7px;
+
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: var(--destructive);
+
+  border: 1px solid white;
+}
+
+
+/* Divider */
+
+.topbar-divider {
+  width: 1px;
+  height: 24px;
+
+  margin: 0 0.5rem;
+
+  background: var(--border);
+}
+
+
+/* User */
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+
+  gap: 0.6rem;
+
+  padding: 0.25rem 0.4rem;
+
+  border: none;
+  border-radius: var(--radius);
+
+  background: transparent;
+
+  color: var(--foreground);
+
+  text-align: left;
+
+  transition: background-color 150ms ease;
+}
+
+.topbar-user:hover {
+  background: var(--muted);
+}
+
+.topbar-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar-user-info span {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.topbar-user-info small {
+  color: var(--muted-foreground);
+
+  font-size: 0.65rem;
+}
+
+.topbar-chevron {
+  width: 14px;
+  height: 14px;
+
+  margin-left: 0.2rem;
+
+  color: var(--muted-foreground);
+
+  stroke-width: 1.8;
+}
