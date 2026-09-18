@@ -1,31 +1,77 @@
-import "./App.css";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
 import DashboardLayout from "./layouts/DashboardLayout/DashboardLayout";
 import Login from "./pages/Login/Login";
-
+import Warehouses from "./pages/Warehouses/Warehouses";
+import AddWarehouse from "./pages/Warehouses/AddWarehouse";
+import AddItem from "./pages/Items/AddItem";
+import Items from "./pages/Items/Items";
 
 function App() {
   return (
-    <>
-      {/* <Login /> */}
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-      <DashboardLayout>
+        <Route
+          path="/warehouses"
+          element={
+            <DashboardLayout>
+              <Warehouses />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/items"
+          element={
+            <DashboardLayout>
+              <Items />
+            </DashboardLayout>
+          }
+        />
 
-      <div className="dashboard-content-inner">
+        <Route
+          path="/warehouses/new"
+          element={
+            <DashboardLayout>
+              <AddWarehouse />
+            </DashboardLayout>
+          }
+        />
 
-        <div className="card">
-          <h2>
-            Welcome to ADMS
-          </h2>
+        <Route
+          path="/items/new"
+          element={
+            <DashboardLayout>
+              <AddItem />
+            </DashboardLayout>
+          }
+        />
 
-          <p className="muted">
-            Your asset management dashboard.
-          </p>
-        </div>
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to="/warehouses"
+              replace
+            />
+          }
+        />
 
-      </div>
-
-    </DashboardLayout>  
-    </>
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to="/warehouses"
+              replace
+            />
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

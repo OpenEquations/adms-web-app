@@ -7,94 +7,127 @@ import {
   Package,
   Settings,
   Users,
+  Warehouse as WarehouseIcon,
 } from "lucide-react";
+
+import { NavLink } from "react-router-dom";
 
 import "./Sidebar.css";
 
 function Sidebar() {
+  const navItemClass = ({ isActive }) =>
+    isActive ? "nav-item active" : "nav-item";
+
   return (
     <aside className="sidebar">
       {/* Brand */}
       <div className="sidebar-brand">
-        <div className="brand-logo">
-          A
-        </div>
+        <div className="brand-logo">A</div>
 
         <div className="brand-info">
           <span className="brand-name">ADMS</span>
 
           <span className="brand-description">
-            Asset Management
+            Disposal Management
           </span>
         </div>
       </div>
 
       {/* Navigation */}
       <nav className="sidebar-nav">
+        {/* Overview */}
         <div className="nav-section">
           <span className="nav-section-title">
             Overview
           </span>
 
-          <a href="#" className="nav-item active">
+          <NavLink
+            to="/"
+            end
+            className={navItemClass}
+          >
             <LayoutDashboard className="nav-icon" />
-
             <span>Dashboard</span>
-          </a>
+          </NavLink>
         </div>
 
+        {/* Management */}
         <div className="nav-section">
           <span className="nav-section-title">
             Management
           </span>
 
-          <a href="#" className="nav-item">
+          <NavLink
+            to="/items"
+            className={navItemClass}
+          >
             <Package className="nav-icon" />
+            <span>Items</span>
+          </NavLink>
 
-            <span>Assets</span>
-          </a>
+          <NavLink
+            to="/warehouses"
+            className={navItemClass}
+          >
+            <WarehouseIcon className="nav-icon" />
+            <span>Warehouses</span>
+          </NavLink>
 
-          <a href="#" className="nav-item">
+          <NavLink
+            to="/companies"
+            className={navItemClass}
+          >
             <Building2 className="nav-icon" />
-
             <span>Companies</span>
-          </a>
+          </NavLink>
 
-          <a href="#" className="nav-item">
+          <NavLink
+            to="/disposal-requests"
+            className={navItemClass}
+          >
             <ClipboardList className="nav-icon" />
-
             <span>Disposal Requests</span>
-          </a>
+          </NavLink>
 
-          <a href="#" className="nav-item">
+          <NavLink
+            to="/users"
+            className={navItemClass}
+          >
             <Users className="nav-icon" />
-
             <span>Users</span>
-          </a>
+          </NavLink>
         </div>
 
+        {/* System */}
         <div className="nav-section">
           <span className="nav-section-title">
             System
           </span>
 
-          <a href="#" className="nav-item">
+          <NavLink
+            to="/reports"
+            className={navItemClass}
+          >
             <BarChart3 className="nav-icon" />
-
             <span>Reports</span>
-          </a>
+          </NavLink>
 
-          <a href="#" className="nav-item">
+          <NavLink
+            to="/settings"
+            className={navItemClass}
+          >
             <Settings className="nav-icon" />
-
             <span>Settings</span>
-          </a>
+          </NavLink>
         </div>
       </nav>
 
       {/* User */}
       <div className="sidebar-footer">
-        <button className="sidebar-user">
+        <button
+          type="button"
+          className="sidebar-user"
+        >
           <div className="avatar avatar-sm">
             BJ
           </div>

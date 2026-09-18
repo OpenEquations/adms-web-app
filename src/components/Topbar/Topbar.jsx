@@ -17,7 +17,7 @@ function Topbar() {
           </h1>
 
           <p className="topbar-subtitle">
-            Overview of your asset management system
+            Overview of your Assets Disposal Management system
           </p>
         </div>
       </div>
