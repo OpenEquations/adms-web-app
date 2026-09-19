@@ -1,4 +1,4 @@
-import { BarChart3, Settings } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { AuthProvider } from "./context/AuthContext";
@@ -28,6 +28,9 @@ import EditUser from "./pages/Users/EditUser";
 import Tenders from "./pages/Tenders/Tenders";
 import AddTender from "./pages/Tenders/AddTender";
 import TenderDetail from "./pages/Tenders/TenderDetail";
+import TenderPoster from "./pages/Tenders/TenderPoster";
+
+import OrganizationSettings from "./pages/Settings/OrganizationSettings";
 
 function protect(element) {
   return (
@@ -116,6 +119,14 @@ function App() {
             path="/disposal-requests/:id"
             element={protect(<TenderDetail />)}
           />
+          <Route
+            path="/disposal-requests/:id/poster"
+            element={
+              <ProtectedRoute>
+                <TenderPoster />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/reports"
@@ -129,13 +140,7 @@ function App() {
           />
           <Route
             path="/settings"
-            element={protect(
-              <ComingSoon
-                icon={Settings}
-                title="Settings"
-                description="Workspace settings are on the roadmap. Check back soon."
-              />,
-            )}
+            element={protect(<OrganizationSettings />)}
           />
 
           <Route

@@ -84,7 +84,7 @@ function Dashboard() {
   }, []);
 
   const lowHealthItems = useMemo(
-    () => items.filter((item) => item.itemHealth <= 3),
+    () => items.filter((item) => item.itemHealth <= 30),
     [items],
   );
 
@@ -189,7 +189,7 @@ function Dashboard() {
           <div className="stat-footer">
             <span className="stat-warning">
               <AlertTriangle />
-              Health score 3 or below
+              Health score 30% or below
             </span>
           </div>
         </div>

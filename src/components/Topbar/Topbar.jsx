@@ -26,7 +26,7 @@ const PAGE_INFO = [
   { match: /^\/disposal-requests\/.+/, title: "Disposal Request", subtitle: "Tender details, items and winner" },
   { match: /^\/disposal-requests/, title: "Disposal Requests", subtitle: "Manage repair and selling tenders" },
   { match: /^\/reports/, title: "Reports", subtitle: "Reporting and analytics" },
-  { match: /^\/settings/, title: "Settings", subtitle: "Workspace settings" },
+  { match: /^\/settings/, title: "Settings", subtitle: "Organization profile used on printable documents" },
 ];
 
 function resolvePageInfo(pathname) {

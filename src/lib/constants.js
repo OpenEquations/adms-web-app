@@ -14,6 +14,15 @@ export const ITEM_STATUS_LABELS = {
   OUT_OF_STOCK: "Out of Stock",
 };
 
+export const ITEM_TYPES = ["ELECTRONICS", "FURNITURE", "APPLIANCE", "OTHER"];
+
+export const ITEM_TYPE_LABELS = {
+  ELECTRONICS: "Electronics",
+  FURNITURE: "Furniture",
+  APPLIANCE: "Appliance",
+  OTHER: "Other",
+};
+
 export const TENDER_TYPES = ["REPAIR_TENDER", "SELLING_TENDER"];
 
 export const TENDER_TYPE_LABELS = {

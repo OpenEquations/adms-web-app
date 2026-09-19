@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import { itemsApi } from "../../lib/api/items";
 import { warehousesApi } from "../../lib/api/warehouses";
 import { ApiError } from "../../lib/apiClient";
-import { ITEM_STATUS_LABELS, statusToClassName } from "../../lib/constants";
+import { ITEM_STATUS_LABELS, ITEM_TYPE_LABELS, statusToClassName } from "../../lib/constants";
 import ActionsMenu from "../../components/ActionsMenu/ActionsMenu";
 
 import "./Items.css";
@@ -147,6 +147,7 @@ function Items() {
                 <thead>
                   <tr>
                     <th>Item</th>
+                    <th>Type</th>
                     <th>Status</th>
                     <th>Health</th>
                     <th>Warehouse</th>
@@ -179,6 +180,13 @@ function Items() {
                         </div>
                       </td>
 
+                      {/* Type */}
+                      <td>
+                        <span className="item-type">
+                          {ITEM_TYPE_LABELS[item.itemType] ?? "Unspecified"}
+                        </span>
+                      </td>
+
                       {/* Status */}
                       <td>
                         <span
@@ -195,12 +203,12 @@ function Items() {
                             <div
                               className="health-bar-fill"
                               style={{
-                                width: `${item.itemHealth * 10}%`,
+                                width: `${item.itemHealth}%`,
                               }}
                             />
                           </div>
 
-                          <span>{item.itemHealth}/10</span>
+                          <span>{item.itemHealth}%</span>
                         </div>
                       </td>
 

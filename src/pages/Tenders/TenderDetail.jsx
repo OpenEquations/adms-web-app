@@ -6,6 +6,7 @@ import {
   ClipboardList,
   Package,
   Plus,
+  Printer,
   Trash2,
   Trophy,
 } from "lucide-react";
@@ -251,13 +252,25 @@ function TenderDetail() {
           </div>
         </div>
 
-        <Link
-          to="/disposal-requests"
-          className="btn btn-outline"
-        >
-          <ArrowLeft />
-          Back
-        </Link>
+        <div className="tender-detail-header-actions">
+          <Link
+            to={`/disposal-requests/${id}/poster`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-primary"
+          >
+            <Printer />
+            Print / Export PDF
+          </Link>
+
+          <Link
+            to="/disposal-requests"
+            className="btn btn-outline"
+          >
+            <ArrowLeft />
+            Back
+          </Link>
+        </div>
       </div>
 
       {error && (

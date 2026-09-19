@@ -237,7 +237,7 @@
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  z-index: 20;
+  z-index: 160;
 
   min-width: 160px;
 
@@ -252,6 +252,18 @@
   border-radius: var(--radius);
 
   box-shadow: 0 6px 20px rgb(0 0 0 / 10%);
+}
+
+/*
+ * Used by ActionsMenu, which portals the menu to document.body so it can
+ * escape table wrappers with overflow-x: auto - setting only one overflow
+ * axis forces the browser to clip the other, cutting the menu off. Position
+ * is computed in JS (button's bounding rect) and passed as inline top/left.
+ */
+.dropdown-menu-portal {
+  position: fixed;
+  right: auto;
+  transform: translateX(-100%);
 }
 
 .dropdown-item {
@@ -302,7 +314,7 @@
 .dropdown-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 10;
+  z-index: 150;
   background: transparent;
   border: 0;
   cursor: default;

@@ -1,0 +1,257 @@
+.poster-page {
+  min-height: 100vh;
+  padding: 2rem 1.5rem 3rem;
+  background: var(--muted);
+}
+
+/* Toolbar */
+
+.poster-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto 1.5rem;
+}
+
+.poster-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.poster-toolbar .btn {
+  gap: 0.4rem;
+}
+
+.poster-toolbar svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 1.8;
+}
+
+.poster-org-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--destructive);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.poster-org-warning svg {
+  width: 14px;
+  height: 14px;
+}
+
+.poster-print-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  max-width: 800px;
+  margin: 1rem auto 0;
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+}
+
+.poster-print-hint svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 1.8;
+}
+
+/* The printable sheet */
+
+.poster-sheet {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3rem 3.5rem;
+
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
+}
+
+/* Header / letterhead */
+
+.poster-header {
+  text-align: center;
+}
+
+.poster-org-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.poster-org-tagline {
+  margin-top: 0.3rem;
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.poster-org-contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+  margin-top: 0.75rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.poster-org-contact span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.poster-org-contact svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 1.8;
+}
+
+.poster-org-registration {
+  margin-top: 0.4rem;
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+}
+
+.poster-divider {
+  height: 1px;
+  margin: 1.5rem 0;
+  background: var(--border);
+}
+
+/* Body */
+
+.poster-eyebrow {
+  text-align: center;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.poster-title {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.poster-badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.poster-description {
+  max-width: 560px;
+  margin: 1.5rem auto 0;
+  color: var(--foreground);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.poster-items-section {
+  margin-top: 2rem;
+}
+
+.poster-items-section h2 {
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.poster-items-empty {
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+}
+
+.poster-items-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.poster-items-table th {
+  padding: 0.5rem 0.6rem;
+  background: var(--muted);
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-align: left;
+}
+
+.poster-items-table td {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+
+/* Footer */
+
+.poster-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+/* Print */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .poster-page {
+    min-height: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .poster-sheet {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  @page {
+    size: A4;
+    margin: 1.5cm;
+  }
+}
+
+@media (max-width: 640px) {
+  .poster-sheet {
+    padding: 2rem 1.25rem;
+  }
+
+  .poster-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .poster-toolbar-right {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -8,6 +8,7 @@ export const itemsApi = {
   changeDescription: (id, itemDescription) =>
     api.patch(`/items/${id}/description`, { itemDescription }),
   changeStatus: (id, itemStatus) => api.patch(`/items/${id}/status`, { itemStatus }),
+  changeType: (id, itemType) => api.patch(`/items/${id}/type`, { itemType }),
   changeHealth: (id, itemHealth) => api.patch(`/items/${id}/health`, { itemHealth }),
   remove: (id) => api.delete(`/items/${id}`),
 };

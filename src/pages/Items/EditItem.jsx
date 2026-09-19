@@ -10,7 +10,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { itemsApi } from "../../lib/api/items";
 import { warehousesApi } from "../../lib/api/warehouses";
 import { ApiError } from "../../lib/apiClient";
-import { ITEM_STATUSES, ITEM_STATUS_LABELS } from "../../lib/constants";
+import { ITEM_STATUSES, ITEM_STATUS_LABELS, ITEM_TYPES, ITEM_TYPE_LABELS } from "../../lib/constants";
 
 import "./AddItem.css";
 
@@ -53,6 +53,7 @@ function EditItem() {
           itemName: item.itemName,
           itemDescription: item.itemDescription,
           itemStatus: item.itemStatus,
+          itemType: item.itemType ?? "",
           itemHealth: String(item.itemHealth),
           warehouseId: currentWarehouse ? String(currentWarehouse.id) : "",
         });
@@ -89,6 +90,7 @@ function EditItem() {
         itemsApi.changeName(id, form.itemName),
         itemsApi.changeDescription(id, form.itemDescription),
         itemsApi.changeStatus(id, form.itemStatus),
+        itemsApi.changeType(id, form.itemType),
         itemsApi.changeHealth(id, Number(form.itemHealth)),
       ]);
 
@@ -251,6 +253,35 @@ function EditItem() {
 
             <div className="form-row">
               <div className="form-group">
+                <label htmlFor="item-type">
+                  Type
+                </label>
+
+                <select
+                  id="item-type"
+                  className="input"
+                  value={form.itemType}
+                  onChange={updateField("itemType")}
+                  required
+                >
+                  <option
+                    value=""
+                    disabled
+                  >
+                    Select type
+                  </option>
+                  {ITEM_TYPES.map((type) => (
+                    <option
+                      key={type}
+                      value={type}
+                    >
+                      {ITEM_TYPE_LABELS[type]}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
                 <label htmlFor="item-health">
                   Health
                 </label>
@@ -260,14 +291,14 @@ function EditItem() {
                   type="number"
                   className="input"
                   min="0"
-                  max="10"
+                  max="100"
                   value={form.itemHealth}
                   onChange={updateField("itemHealth")}
                   required
                 />
 
                 <span className="form-help">
-                  Enter a health score between 0 and 10.
+                  Enter a health score between 0 and 100.
                 </span>
               </div>
             </div>

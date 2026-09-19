@@ -1,0 +1,131 @@
+.org-settings-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.org-settings-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.org-settings-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+.org-settings-icon svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.8;
+}
+
+.org-settings-header h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.org-settings-header p {
+  margin-top: 2px;
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+}
+
+.org-settings-card {
+  padding: 1.5rem;
+}
+
+.org-settings-card .form-card-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.org-settings-card .form-card-header h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.org-settings-card .form-card-header p {
+  margin-top: 3px;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.org-settings-card .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.org-settings-card .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.org-settings-card .form-row .form-group {
+  margin-bottom: 0;
+}
+
+.org-settings-card .form-group label {
+  margin-bottom: 0.4rem;
+  color: var(--foreground);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.org-settings-card .form-help {
+  margin-top: 0.4rem;
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+}
+
+.org-settings-card .textarea {
+  height: auto;
+  min-height: 72px;
+  padding: 0.65rem 0.75rem;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.org-settings-card .form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.org-settings-card .form-actions .btn {
+  gap: 0.4rem;
+}
+
+@media (max-width: 640px) {
+  .org-settings-page {
+    padding: 1rem;
+  }
+
+  .org-settings-card .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .org-settings-card .form-row .form-group {
+    margin-bottom: 1rem;
+  }
+}

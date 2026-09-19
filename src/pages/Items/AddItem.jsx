@@ -10,7 +10,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { itemsApi } from "../../lib/api/items";
 import { warehousesApi } from "../../lib/api/warehouses";
 import { ApiError } from "../../lib/apiClient";
-import { ITEM_STATUSES, ITEM_STATUS_LABELS } from "../../lib/constants";
+import { ITEM_STATUSES, ITEM_STATUS_LABELS, ITEM_TYPES, ITEM_TYPE_LABELS } from "../../lib/constants";
 
 import "./AddItem.css";
 
@@ -18,6 +18,7 @@ const emptyForm = {
   itemName: "",
   itemDescription: "",
   itemStatus: "",
+  itemType: "",
   itemHealth: "",
   dateBought: "",
   warehouseId: "",
@@ -54,6 +55,7 @@ function AddItem() {
         itemName: form.itemName,
         itemDescription: form.itemDescription,
         itemStatus: form.itemStatus || null,
+        itemType: form.itemType || null,
         itemHealth: form.itemHealth === "" ? null : Number(form.itemHealth),
         dateBought: form.dateBought || null,
       });
@@ -219,6 +221,38 @@ function AddItem() {
               </div>
 
               <div className="form-group">
+                <label htmlFor="item-type">
+                  Type
+                </label>
+
+                <select
+                  id="item-type"
+                  name="itemType"
+                  className="input"
+                  value={form.itemType}
+                  onChange={updateField("itemType")}
+                  required
+                >
+                  <option
+                    value=""
+                    disabled
+                  >
+                    Select type
+                  </option>
+                  {ITEM_TYPES.map((type) => (
+                    <option
+                      key={type}
+                      value={type}
+                    >
+                      {ITEM_TYPE_LABELS[type]}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
                 <label htmlFor="item-health">
                   Health
                 </label>
@@ -228,16 +262,16 @@ function AddItem() {
                   name="itemHealth"
                   type="number"
                   className="input"
-                  placeholder="0 - 10"
+                  placeholder="0 - 100"
                   min="0"
-                  max="10"
+                  max="100"
                   value={form.itemHealth}
                   onChange={updateField("itemHealth")}
                   required
                 />
 
                 <span className="form-help">
-                  Enter a health score between 0 and 10.
+                  Enter a health score between 0 and 100.
                 </span>
               </div>
             </div>
@@ -335,7 +369,7 @@ function AddItem() {
 
           <div className="info-item">
             <span>Health</span>
-            <strong>0 – 10</strong>
+            <strong>0 – 100</strong>
           </div>
 
           <div className="info-item">

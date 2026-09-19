@@ -207,6 +207,13 @@
   font-size: 0.7rem;
 }
 
+/* Type */
+
+.item-type {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
 /* Warehouse */
 
 .item-warehouse {
