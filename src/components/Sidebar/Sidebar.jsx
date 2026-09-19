@@ -1,22 +1,42 @@
+import { useState } from "react";
 import {
   BarChart3,
   Building2,
-  ChevronDown,
   ClipboardList,
   LayoutDashboard,
+  LogOut,
   Package,
   Settings,
   Users,
   Warehouse as WarehouseIcon,
 } from "lucide-react";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+
+import { useAuth } from "../../context/AuthContext";
 
 import "./Sidebar.css";
 
+function initials(user) {
+  if (!user) {
+    return "?";
+  }
+
+  return `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
+}
+
 function Sidebar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const navItemClass = ({ isActive }) =>
     isActive ? "nav-item active" : "nav-item";
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <aside className="sidebar">
@@ -42,7 +62,7 @@ function Sidebar() {
           </span>
 
           <NavLink
-            to="/"
+            to="/dashboard"
             end
             className={navItemClass}
           >
@@ -124,26 +144,50 @@ function Sidebar() {
 
       {/* User */}
       <div className="sidebar-footer">
-        <button
-          type="button"
-          className="sidebar-user"
-        >
-          <div className="avatar avatar-sm">
-            BJ
-          </div>
+        <div className="dropdown sidebar-user-dropdown">
+          <button
+            type="button"
+            className="sidebar-user"
+            onClick={() => setMenuOpen((value) => !value)}
+          >
+            <div className="avatar avatar-sm">
+              {initials(user)}
+            </div>
 
-          <div className="sidebar-user-info">
-            <span className="sidebar-user-name">
-              Bonheur Joseph
-            </span>
+            <div className="sidebar-user-info">
+              <span className="sidebar-user-name">
+                {user ? `${user.firstName} ${user.lastName}` : "Guest"}
+              </span>
 
-            <span className="sidebar-user-role">
-              Administrator
-            </span>
-          </div>
+              <span className="sidebar-user-role">
+                {user?.email ?? ""}
+              </span>
+            </div>
+          </button>
 
-          <ChevronDown className="user-more" />
-        </button>
+          {menuOpen && (
+            <>
+              <button
+                type="button"
+                className="dropdown-backdrop"
+                aria-hidden="true"
+                tabIndex={-1}
+                onClick={() => setMenuOpen(false)}
+              />
+
+              <div className="dropdown-menu sidebar-user-menu">
+                <button
+                  type="button"
+                  className="dropdown-item dropdown-item-destructive"
+                  onClick={handleLogout}
+                >
+                  <LogOut />
+                  Log out
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </aside>
   );

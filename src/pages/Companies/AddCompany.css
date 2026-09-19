@@ -1,0 +1,123 @@
+.company-form-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.company-form-page .page-header {
+  margin-bottom: 1.5rem;
+}
+
+.company-form-page .breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.company-form-page .breadcrumb a {
+  color: var(--muted-foreground);
+  transition: color 150ms ease;
+}
+
+.company-form-page .breadcrumb a:hover {
+  color: var(--foreground);
+}
+
+.company-form-page .page-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.company-form-page .page-title-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+.company-form-page .page-title-icon svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.8;
+}
+
+.company-form-page .page-title-row h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.company-form-page .page-title-row p {
+  margin-top: 2px;
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+}
+
+.company-form-card {
+  padding: 1.5rem;
+}
+
+.company-form-card .form-card-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.company-form-card .form-card-header h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.company-form-card .form-card-header p {
+  margin-top: 3px;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.company-form-card .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.company-form-card .form-group label {
+  margin-bottom: 0.4rem;
+  color: var(--foreground);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.company-form-card .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.company-form-card .form-actions .btn {
+  gap: 0.4rem;
+}
+
+.company-form-card .form-actions svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 1.8;
+}
+
+@media (max-width: 768px) {
+  .company-form-page {
+    padding: 1rem;
+  }
+}

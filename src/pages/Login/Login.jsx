@@ -1,6 +1,51 @@
+import { useState } from "react";
+import { AlertCircle } from "lucide-react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+
+import { useAuth } from "../../context/AuthContext";
+import { ApiError } from "../../lib/apiClient";
+
 import "./Login.css";
 
 function Login() {
+  const { isAuthenticated, login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  if (isAuthenticated) {
+    const destination = location.state?.from?.pathname ?? "/dashboard";
+    return (
+      <Navigate
+        to={destination}
+        replace
+      />
+    );
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setSubmitting(true);
+
+    try {
+      await login(email, password);
+      navigate(location.state?.from?.pathname ?? "/dashboard", { replace: true });
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <main className="login-page">
       <div className="login-container">
@@ -18,7 +63,17 @@ function Login() {
         </div>
 
         <div className="login-card">
-          <form>
+          <form onSubmit={handleSubmit}>
+
+            {error && (
+              <div
+                className="banner banner-error"
+                role="alert"
+              >
+                <AlertCircle />
+                <span>{error}</span>
+              </div>
+            )}
 
             <div className="form-group">
               <label htmlFor="email">
@@ -31,6 +86,9 @@ function Login() {
                 className="input"
                 placeholder="name@example.com"
                 autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
               />
             </div>
 
@@ -39,10 +97,6 @@ function Login() {
                 <label htmlFor="password">
                   Password
                 </label>
-
-                <a href="#">
-                  Forgot password?
-                </a>
               </div>
 
               <input
@@ -51,26 +105,19 @@ function Login() {
                 className="input"
                 placeholder="Enter your password"
                 autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
               />
-            </div>
-
-            <div className="remember-row">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                />
-
-                <span>
-                  Remember me
-                </span>
-              </label>
             </div>
 
             <button
               type="submit"
               className="btn btn-primary login-button"
+              disabled={submitting}
             >
-              Sign in
+              {submitting && <span className="spinner" />}
+              {submitting ? "Signing in..." : "Sign in"}
             </button>
 
           </form>

@@ -1,9 +1,34 @@
-import { ArrowLeft, Warehouse as WarehouseIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { AlertCircle, ArrowLeft, Warehouse as WarehouseIcon } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+
+import { warehousesApi } from "../../lib/api/warehouses";
+import { ApiError } from "../../lib/apiClient";
 
 import "./AddWarehouse.css";
 
 function AddWarehouse() {
+  const navigate = useNavigate();
+
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setSubmitting(true);
+
+    try {
+      await warehousesApi.create(name);
+      navigate("/warehouses");
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="add-warehouse-page">
       <div className="page-header">
@@ -38,7 +63,17 @@ function AddWarehouse() {
             </p>
           </div>
 
-          <form>
+          <form onSubmit={handleSubmit}>
+            {error && (
+              <div
+                className="banner banner-error"
+                role="alert"
+              >
+                <AlertCircle />
+                <span>{error}</span>
+              </div>
+            )}
+
             <div className="form-group">
               <label htmlFor="warehouse-name">
                 Warehouse name
@@ -51,6 +86,9 @@ function AddWarehouse() {
                 className="input"
                 placeholder="e.g. Kigali Central Warehouse"
                 autoComplete="off"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                required
               />
 
               <span className="form-help">
@@ -70,8 +108,10 @@ function AddWarehouse() {
               <button
                 type="submit"
                 className="btn btn-primary"
+                disabled={submitting}
               >
-                Create Warehouse
+                {submitting && <span className="spinner" />}
+                {submitting ? "Creating..." : "Create Warehouse"}
               </button>
             </div>
           </form>

@@ -1,0 +1,13 @@
+import { api } from "../apiClient";
+
+export const itemsApi = {
+  getAll: () => api.get("/items"),
+  getById: (id) => api.get(`/items/${id}`),
+  create: (data) => api.post("/items", data),
+  changeName: (id, itemName) => api.patch(`/items/${id}/name`, { itemName }),
+  changeDescription: (id, itemDescription) =>
+    api.patch(`/items/${id}/description`, { itemDescription }),
+  changeStatus: (id, itemStatus) => api.patch(`/items/${id}/status`, { itemStatus }),
+  changeHealth: (id, itemHealth) => api.patch(`/items/${id}/health`, { itemHealth }),
+  remove: (id) => api.delete(`/items/${id}`),
+};

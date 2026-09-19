@@ -151,33 +151,32 @@
 
 /* Status */
 
-.item-status {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 0.55rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--muted);
-  color: var(--muted-foreground);
-  font-size: 0.65rem;
-  font-weight: 500;
-  text-transform: capitalize;
-}
-
-.status-active {
+.status-new {
   background: #f4f4f5;
   color: #18181b;
 }
 
-.status-in_repair {
+.status-in-use {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: rgb(4 120 87 / 20%);
+}
+
+.status-no-longer-in-use {
   background: #fafafa;
   color: #52525b;
 }
 
-.status-disposed {
-  background: #f4f4f5;
-  color: #71717a;
+.status-sold {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: rgb(29 78 216 / 20%);
+}
+
+.status-out-of-stock {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: rgb(185 28 28 / 20%);
 }
 
 /* Health */

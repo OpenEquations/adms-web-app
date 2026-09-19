@@ -5,7 +5,7 @@ import {
   Package,
   Warehouse as WarehouseIcon,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { itemsApi } from "../../lib/api/items";
 import { warehousesApi } from "../../lib/api/warehouses";
@@ -14,30 +14,65 @@ import { ITEM_STATUSES, ITEM_STATUS_LABELS } from "../../lib/constants";
 
 import "./AddItem.css";
 
-const emptyForm = {
-  itemName: "",
-  itemDescription: "",
-  itemStatus: "",
-  itemHealth: "",
-  dateBought: "",
-  warehouseId: "",
-};
-
-function AddItem() {
+function EditItem() {
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [warehouses, setWarehouses] = useState([]);
-  const [form, setForm] = useState(emptyForm);
+  const [originalWarehouseId, setOriginalWarehouseId] = useState("");
+  const [form, setForm] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    warehousesApi
-      .getAll()
-      .then(setWarehouses)
-      .catch(() => setWarehouses([]));
-  }, []);
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setError("");
+
+      try {
+        const [item, warehousesData] = await Promise.all([
+          itemsApi.getById(id),
+          warehousesApi.getAll(),
+        ]);
+
+        if (cancelled) {
+          return;
+        }
+
+        const currentWarehouse = warehousesData.find((warehouse) =>
+          warehouse.items.some((warehouseItem) => warehouseItem.id === item.id),
+        );
+
+        setWarehouses(warehousesData);
+        setOriginalWarehouseId(currentWarehouse ? String(currentWarehouse.id) : "");
+        setForm({
+          itemName: item.itemName,
+          itemDescription: item.itemDescription,
+          itemStatus: item.itemStatus,
+          itemHealth: String(item.itemHealth),
+          warehouseId: currentWarehouse ? String(currentWarehouse.id) : "",
+        });
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof ApiError ? err.message : "Failed to load item.");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   const updateField = (field) => (event) => {
     setForm((current) => ({ ...current, [field]: event.target.value }));
@@ -50,16 +85,20 @@ function AddItem() {
     setSubmitting(true);
 
     try {
-      const created = await itemsApi.create({
-        itemName: form.itemName,
-        itemDescription: form.itemDescription,
-        itemStatus: form.itemStatus || null,
-        itemHealth: form.itemHealth === "" ? null : Number(form.itemHealth),
-        dateBought: form.dateBought || null,
-      });
+      await Promise.all([
+        itemsApi.changeName(id, form.itemName),
+        itemsApi.changeDescription(id, form.itemDescription),
+        itemsApi.changeStatus(id, form.itemStatus),
+        itemsApi.changeHealth(id, Number(form.itemHealth)),
+      ]);
 
-      if (form.warehouseId) {
-        await warehousesApi.addItem(form.warehouseId, created.id);
+      if (form.warehouseId !== originalWarehouseId) {
+        if (originalWarehouseId) {
+          await warehousesApi.removeItem(originalWarehouseId, id);
+        }
+        if (form.warehouseId) {
+          await warehousesApi.addItem(form.warehouseId, id);
+        }
       }
 
       navigate("/items");
@@ -75,6 +114,31 @@ function AddItem() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="add-item-page">
+        <div className="state-block">
+          <span className="spinner" />
+          Loading item...
+        </div>
+      </div>
+    );
+  }
+
+  if (!form) {
+    return (
+      <div className="add-item-page">
+        <div
+          className="banner banner-error"
+          role="alert"
+        >
+          <AlertCircle />
+          <span>{error || "Item not found."}</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="add-item-page">
       <div className="item-page-header">
@@ -82,7 +146,7 @@ function AddItem() {
           <div className="breadcrumb">
             <Link to="/items">Items</Link>
             <span>/</span>
-            <span>Add Item</span>
+            <span>Edit Item</span>
           </div>
 
           <div className="item-title-row">
@@ -91,10 +155,9 @@ function AddItem() {
             </div>
 
             <div>
-              <h1>Add Item</h1>
+              <h1>Edit Item</h1>
               <p>
-                Register a new asset and optionally allocate it
-                to a warehouse.
+                Update this asset's details or move it to another warehouse.
               </p>
             </div>
           </div>
@@ -106,7 +169,7 @@ function AddItem() {
           <div className="form-card-header">
             <h2>Item information</h2>
             <p>
-              Enter the basic information about this asset.
+              Update the basic information about this asset.
             </p>
           </div>
 
@@ -138,10 +201,8 @@ function AddItem() {
 
                 <input
                   id="item-name"
-                  name="itemName"
                   type="text"
                   className="input"
-                  placeholder="e.g. Dell Latitude 5420"
                   autoComplete="off"
                   value={form.itemName}
                   onChange={updateField("itemName")}
@@ -150,63 +211,17 @@ function AddItem() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="date-bought">
-                  Date bought
-                </label>
-
-                <input
-                  id="date-bought"
-                  name="dateBought"
-                  type="date"
-                  className="input"
-                  value={form.dateBought}
-                  onChange={updateField("dateBought")}
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="item-description">
-                Description
-              </label>
-
-              <textarea
-                id="item-description"
-                name="itemDescription"
-                className="input textarea"
-                placeholder="Describe the item..."
-                rows="4"
-                value={form.itemDescription}
-                onChange={updateField("itemDescription")}
-                required
-              />
-
-              <span className="form-help">
-                Include useful details such as model, specifications,
-                serial number, or other identifying information.
-              </span>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
                 <label htmlFor="item-status">
                   Status
                 </label>
 
                 <select
                   id="item-status"
-                  name="itemStatus"
                   className="input"
                   value={form.itemStatus}
                   onChange={updateField("itemStatus")}
                   required
                 >
-                  <option
-                    value=""
-                    disabled
-                  >
-                    Select status
-                  </option>
                   {ITEM_STATUSES.map((status) => (
                     <option
                       key={status}
@@ -217,7 +232,24 @@ function AddItem() {
                   ))}
                 </select>
               </div>
+            </div>
 
+            <div className="form-group">
+              <label htmlFor="item-description">
+                Description
+              </label>
+
+              <textarea
+                id="item-description"
+                className="input textarea"
+                rows="4"
+                value={form.itemDescription}
+                onChange={updateField("itemDescription")}
+                required
+              />
+            </div>
+
+            <div className="form-row">
               <div className="form-group">
                 <label htmlFor="item-health">
                   Health
@@ -225,10 +257,8 @@ function AddItem() {
 
                 <input
                   id="item-health"
-                  name="itemHealth"
                   type="number"
                   className="input"
-                  placeholder="0 - 10"
                   min="0"
                   max="10"
                   value={form.itemHealth}
@@ -251,7 +281,7 @@ function AddItem() {
                 <div>
                   <h3>Warehouse allocation</h3>
                   <p>
-                    Choose where this item is currently stored.
+                    Move this item to a different warehouse, or unallocate it.
                   </p>
                 </div>
               </div>
@@ -259,14 +289,10 @@ function AddItem() {
               <div className="form-group">
                 <label htmlFor="warehouse">
                   Warehouse
-                  <span className="optional-label">
-                    Optional
-                  </span>
                 </label>
 
                 <select
                   id="warehouse"
-                  name="warehouseId"
                   className="input"
                   value={form.warehouseId}
                   onChange={updateField("warehouseId")}
@@ -284,11 +310,6 @@ function AddItem() {
                     </option>
                   ))}
                 </select>
-
-                <span className="form-help">
-                  You can allocate this item to a warehouse now
-                  or leave it unallocated.
-                </span>
               </div>
             </div>
 
@@ -307,45 +328,14 @@ function AddItem() {
                 disabled={submitting}
               >
                 {submitting && <span className="spinner" />}
-                {submitting ? "Adding..." : "Add Item"}
+                {submitting ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </form>
-        </div>
-
-        <div className="card item-info-card">
-          <div className="info-icon">
-            <Package />
-          </div>
-
-          <h3>About items</h3>
-
-          <p>
-            Items represent assets managed by your organization.
-            Their status and health can change throughout their
-            lifecycle.
-          </p>
-
-          <div className="info-divider" />
-
-          <div className="info-item">
-            <span>Warehouse</span>
-            <strong>Optional</strong>
-          </div>
-
-          <div className="info-item">
-            <span>Health</span>
-            <strong>0 – 10</strong>
-          </div>
-
-          <div className="info-item">
-            <span>Lifecycle</span>
-            <strong>Tracked</strong>
-          </div>
         </div>
       </div>
     </div>
   );
 }
 
-export default AddItem;
+export default EditItem;

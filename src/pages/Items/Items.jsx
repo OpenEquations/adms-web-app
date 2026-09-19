@@ -1,48 +1,81 @@
+import { useEffect, useMemo, useState } from "react";
 import {
-  MoreHorizontal,
+  AlertCircle,
+  Edit,
+  Inbox,
   Package,
   Plus,
   Search,
+  Trash2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+
+import { itemsApi } from "../../lib/api/items";
+import { warehousesApi } from "../../lib/api/warehouses";
+import { ApiError } from "../../lib/apiClient";
+import { ITEM_STATUS_LABELS, statusToClassName } from "../../lib/constants";
+import ActionsMenu from "../../components/ActionsMenu/ActionsMenu";
 
 import "./Items.css";
 
 function Items() {
-  const items = [
-    {
-      id: 1,
-      name: "Dell Latitude 5420",
-      status: "ACTIVE",
-      health: 92,
-      warehouse: "Kigali Central Warehouse",
-      dateBought: "2024-03-12",
-    },
-    {
-      id: 2,
-      name: "HP ProDesk 600 G5",
-      status: "IN_REPAIR",
-      health: 58,
-      warehouse: "Rubavu Warehouse",
-      dateBought: "2023-08-21",
-    },
-    {
-      id: 3,
-      name: "Cisco Catalyst 2960",
-      status: "ACTIVE",
-      health: 84,
-      warehouse: "Kigali Central Warehouse",
-      dateBought: "2022-11-04",
-    },
-    {
-      id: 4,
-      name: "Epson Projector EB-X06",
-      status: "DISPOSED",
-      health: 22,
-      warehouse: "Huye Warehouse",
-      dateBought: "2021-06-17",
-    },
-  ];
+  const [items, setItems] = useState([]);
+  const [warehouseByItemId, setWarehouseByItemId] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+
+  const loadItems = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const [itemsData, warehousesData] = await Promise.all([
+        itemsApi.getAll(),
+        warehousesApi.getAll(),
+      ]);
+
+      const warehouseMap = {};
+      warehousesData.forEach((warehouse) => {
+        warehouse.items.forEach((item) => {
+          warehouseMap[item.id] = warehouse.name;
+        });
+      });
+
+      setItems(itemsData);
+      setWarehouseByItemId(warehouseMap);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to load items.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadItems();
+  }, []);
+
+  const handleDelete = async (item) => {
+    if (!window.confirm(`Delete "${item.itemName}"? This cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await itemsApi.remove(item.id);
+      setItems((current) => current.filter((existing) => existing.id !== item.id));
+    } catch (err) {
+      window.alert(err instanceof ApiError ? err.message : "Failed to delete item.");
+    }
+  };
+
+  const filteredItems = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) {
+      return items;
+    }
+    return items.filter((item) => item.itemName.toLowerCase().includes(query));
+  }, [items, search]);
 
   return (
     <div className="items-page">
@@ -75,117 +108,155 @@ function Items() {
               type="search"
               className="input"
               placeholder="Search items..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
             />
           </div>
 
           <div className="items-summary">
-            {items.length} items
+            {filteredItems.length} items
           </div>
         </div>
 
-        {/* Table */}
-        <div className="items-table-wrapper">
-          <table className="items-table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Status</th>
-                <th>Health</th>
-                <th>Warehouse</th>
-                <th>Date Bought</th>
-                <th className="actions-column">
-                  Actions
-                </th>
-              </tr>
-            </thead>
+        {error && (
+          <div
+            className="banner banner-error"
+            style={{ margin: "1rem" }}
+            role="alert"
+          >
+            <AlertCircle />
+            <span>{error}</span>
+          </div>
+        )}
 
-            <tbody>
-              {items.map((item) => (
-                <tr key={item.id}>
-                  {/* Item */}
-                  <td>
-                    <div className="item-name">
-                      <div className="item-icon">
-                        <Package />
-                      </div>
+        {loading ? (
+          <div className="state-block">
+            <span className="spinner" />
+            Loading items...
+          </div>
+        ) : filteredItems.length === 0 ? (
+          <div className="state-block">
+            <Inbox />
+            {items.length === 0 ? "No items yet. Add your first item to get started." : "No items match your search."}
+          </div>
+        ) : (
+          <>
+            {/* Table */}
+            <div className="items-table-wrapper">
+              <table className="items-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Status</th>
+                    <th>Health</th>
+                    <th>Warehouse</th>
+                    <th>Date Bought</th>
+                    <th className="actions-column">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
 
-                      <div>
-                        <span className="item-title">
-                          {item.name}
+                <tbody>
+                  {filteredItems.map((item) => (
+                    <tr key={item.id}>
+                      {/* Item */}
+                      <td>
+                        <div className="item-name">
+                          <div className="item-icon">
+                            <Package />
+                          </div>
+
+                          <div>
+                            <span className="item-title">
+                              {item.itemName}
+                            </span>
+
+                            <span className="item-id">
+                              IT-{String(item.id).padStart(4, "0")}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Status */}
+                      <td>
+                        <span
+                          className={`badge status-${statusToClassName(item.itemStatus)}`}
+                        >
+                          {ITEM_STATUS_LABELS[item.itemStatus] ?? item.itemStatus}
                         </span>
+                      </td>
 
-                        <span className="item-id">
-                          IT-{String(item.id).padStart(4, "0")}
+                      {/* Health */}
+                      <td>
+                        <div className="item-health">
+                          <div className="health-bar">
+                            <div
+                              className="health-bar-fill"
+                              style={{
+                                width: `${item.itemHealth * 10}%`,
+                              }}
+                            />
+                          </div>
+
+                          <span>{item.itemHealth}/10</span>
+                        </div>
+                      </td>
+
+                      {/* Warehouse */}
+                      <td>
+                        <span className="item-warehouse">
+                          {warehouseByItemId[item.id] ?? "Unallocated"}
                         </span>
-                      </div>
-                    </div>
-                  </td>
+                      </td>
 
-                  {/* Status */}
-                  <td>
-                    <span
-                      className={`item-status status-${item.status.toLowerCase()}`}
-                    >
-                      {item.status.replace("_", " ")}
-                    </span>
-                  </td>
+                      {/* Date */}
+                      <td>
+                        <span className="item-date">
+                          {item.dateBought ?? "—"}
+                        </span>
+                      </td>
 
-                  {/* Health */}
-                  <td>
-                    <div className="item-health">
-                      <div className="health-bar">
-                        <div
-                          className="health-bar-fill"
-                          style={{
-                            width: `${item.health}%`,
-                          }}
-                        />
-                      </div>
+                      {/* Actions */}
+                      <td className="actions-column">
+                        <ActionsMenu label={`Actions for ${item.itemName}`}>
+                          <Link
+                            to={`/items/${item.id}/edit`}
+                            className="dropdown-item"
+                          >
+                            <Edit />
+                            Edit
+                          </Link>
 
-                      <span>{item.health}%</span>
-                    </div>
-                  </td>
+                          <button
+                            type="button"
+                            className="dropdown-item dropdown-item-destructive"
+                            onClick={() => handleDelete(item)}
+                          >
+                            <Trash2 />
+                            Delete
+                          </button>
+                        </ActionsMenu>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-                  {/* Warehouse */}
-                  <td>
-                    <span className="item-warehouse">
-                      {item.warehouse}
-                    </span>
-                  </td>
+            {/* Footer */}
+            <div className="items-footer">
+              <span>
+                {filteredItems.length} items
+              </span>
 
-                  {/* Date */}
-                  <td>
-                    <span className="item-date">
-                      {item.dateBought}
-                    </span>
-                  </td>
-
-                  {/* Actions */}
-                  <td className="actions-column">
-                    <button
-                      type="button"
-                      className="item-action"
-                      aria-label={`Actions for ${item.name}`}
-                    >
-                      <MoreHorizontal />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Footer */}
-        <div className="items-footer">
-          <span>
-            {items.length} items
-          </span>
-
-          <span>
-            Showing all items
-          </span>
-        </div>
+              <span>
+                {search ? "Showing filtered results" : "Showing all items"}
+              </span>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

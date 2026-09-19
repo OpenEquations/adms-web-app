@@ -1,36 +1,65 @@
+import { useEffect, useMemo, useState } from "react";
 import {
-  MoreHorizontal,
+  AlertCircle,
+  Eye,
+  Inbox,
   Plus,
   Search,
+  Trash2,
   Warehouse as WarehouseIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { warehousesApi } from "../../lib/api/warehouses";
+import { ApiError } from "../../lib/apiClient";
+import ActionsMenu from "../../components/ActionsMenu/ActionsMenu";
+
 import "./Warehouses.css";
 
 function Warehouses() {
-  const warehouses = [
-    {
-      id: 1,
-      name: "Kigali Central Warehouse",
-      items: 128,
-    },
-    {
-      id: 2,
-      name: "Rubavu Warehouse",
-      items: 64,
-    },
-    {
-      id: 3,
-      name: "Huye Warehouse",
-      items: 42,
-    },
-    {
-      id: 4,
-      name: "Musanze Warehouse",
-      items: 31,
-    },
-  ];
+  const [warehouses, setWarehouses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+
+  const loadWarehouses = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      setWarehouses(await warehousesApi.getAll());
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to load warehouses.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadWarehouses();
+  }, []);
+
+  const handleDelete = async (warehouse) => {
+    if (!window.confirm(`Delete "${warehouse.name}"? This cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await warehousesApi.remove(warehouse.id);
+      setWarehouses((current) => current.filter((existing) => existing.id !== warehouse.id));
+    } catch (err) {
+      window.alert(err instanceof ApiError ? err.message : "Failed to delete warehouse.");
+    }
+  };
+
+  const filteredWarehouses = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) {
+      return warehouses;
+    }
+    return warehouses.filter((warehouse) => warehouse.name.toLowerCase().includes(query));
+  }, [warehouses, search]);
 
   return (
     <div className="warehouses-page">
@@ -61,70 +90,114 @@ function Warehouses() {
               type="search"
               className="input"
               placeholder="Search warehouses..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
             />
           </div>
         </div>
 
-        <div className="warehouse-table-wrapper">
-          <table className="warehouse-table">
-            <thead>
-              <tr>
-                <th>Warehouse</th>
-                <th>Items</th>
-                <th className="actions-column">Actions</th>
-              </tr>
-            </thead>
+        {error && (
+          <div
+            className="banner banner-error"
+            style={{ margin: "1rem" }}
+            role="alert"
+          >
+            <AlertCircle />
+            <span>{error}</span>
+          </div>
+        )}
 
-            <tbody>
-              {warehouses.map((warehouse) => (
-                <tr key={warehouse.id}>
-                  <td>
-                    <div className="warehouse-name">
-                      <div className="warehouse-icon">
-                        <WarehouseIcon />
-                      </div>
+        {loading ? (
+          <div className="state-block">
+            <span className="spinner" />
+            Loading warehouses...
+          </div>
+        ) : filteredWarehouses.length === 0 ? (
+          <div className="state-block">
+            <Inbox />
+            {warehouses.length === 0
+              ? "No warehouses yet. Add your first warehouse to get started."
+              : "No warehouses match your search."}
+          </div>
+        ) : (
+          <>
+            <div className="warehouse-table-wrapper">
+              <table className="warehouse-table">
+                <thead>
+                  <tr>
+                    <th>Warehouse</th>
+                    <th>Items</th>
+                    <th className="actions-column">Actions</th>
+                  </tr>
+                </thead>
 
-                      <div>
-                        <span className="warehouse-title">
-                          {warehouse.name}
+                <tbody>
+                  {filteredWarehouses.map((warehouse) => (
+                    <tr key={warehouse.id}>
+                      <td>
+                        <Link
+                          to={`/warehouses/${warehouse.id}`}
+                          className="warehouse-name"
+                        >
+                          <div className="warehouse-icon">
+                            <WarehouseIcon />
+                          </div>
+
+                          <div>
+                            <span className="warehouse-title">
+                              {warehouse.name}
+                            </span>
+
+                            <span className="warehouse-id">
+                              WH-{String(warehouse.id).padStart(4, "0")}
+                            </span>
+                          </div>
+                        </Link>
+                      </td>
+
+                      <td>
+                        <span className="item-count">
+                          {warehouse.items.length}
                         </span>
+                      </td>
 
-                        <span className="warehouse-id">
-                          WH-{String(warehouse.id).padStart(4, "0")}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
+                      <td className="actions-column">
+                        <ActionsMenu label={`Actions for ${warehouse.name}`}>
+                          <Link
+                            to={`/warehouses/${warehouse.id}`}
+                            className="dropdown-item"
+                          >
+                            <Eye />
+                            View items
+                          </Link>
 
-                  <td>
-                    <span className="item-count">
-                      {warehouse.items}
-                    </span>
-                  </td>
+                          <button
+                            type="button"
+                            className="dropdown-item dropdown-item-destructive"
+                            onClick={() => handleDelete(warehouse)}
+                          >
+                            <Trash2 />
+                            Delete
+                          </button>
+                        </ActionsMenu>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-                  <td className="actions-column">
-                    <button
-                      className="warehouse-action"
-                      aria-label={`Actions for ${warehouse.name}`}
-                    >
-                      <MoreHorizontal />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            <div className="warehouses-footer">
+              <span>
+                {filteredWarehouses.length} warehouses
+              </span>
 
-        <div className="warehouses-footer">
-          <span>
-            {warehouses.length} warehouses
-          </span>
-
-          <span>
-            Showing all warehouses
-          </span>
-        </div>
+              <span>
+                {search ? "Showing filtered results" : "Showing all warehouses"}
+              </span>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
