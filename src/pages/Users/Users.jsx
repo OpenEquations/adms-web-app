@@ -131,6 +131,7 @@ function Users() {
                 <tr>
                   <th>User</th>
                   <th>Email</th>
+                  <th>Role</th>
                   <th className="actions-column">Actions</th>
                 </tr>
               </thead>
@@ -156,6 +157,12 @@ function Users() {
                     <td>
                       <span className="user-email">
                         {user.email}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span className={`badge ${user.role === "SUPERADMIN" ? "role-badge-superadmin" : "role-badge-user"}`}>
+                        {user.role === "SUPERADMIN" ? "Superadmin" : "User"}
                       </span>
                     </td>
 

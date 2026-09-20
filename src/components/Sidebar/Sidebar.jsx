@@ -26,15 +26,15 @@ function initials(user) {
 }
 
 function Sidebar() {
-  const { user, logout } = useAuth();
+  const { user, isSuperAdmin, hasPermission, logout } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navItemClass = ({ isActive }) =>
     isActive ? "nav-item active" : "nav-item";
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/login", { replace: true });
   };
 
@@ -77,45 +77,55 @@ function Sidebar() {
             Management
           </span>
 
-          <NavLink
-            to="/items"
-            className={navItemClass}
-          >
-            <Package className="nav-icon" />
-            <span>Items</span>
-          </NavLink>
+          {hasPermission("MANAGE_ITEMS") && (
+            <NavLink
+              to="/items"
+              className={navItemClass}
+            >
+              <Package className="nav-icon" />
+              <span>Items</span>
+            </NavLink>
+          )}
 
-          <NavLink
-            to="/warehouses"
-            className={navItemClass}
-          >
-            <WarehouseIcon className="nav-icon" />
-            <span>Warehouses</span>
-          </NavLink>
+          {hasPermission("MANAGE_WAREHOUSES") && (
+            <NavLink
+              to="/warehouses"
+              className={navItemClass}
+            >
+              <WarehouseIcon className="nav-icon" />
+              <span>Warehouses</span>
+            </NavLink>
+          )}
 
-          <NavLink
-            to="/companies"
-            className={navItemClass}
-          >
-            <Building2 className="nav-icon" />
-            <span>Companies</span>
-          </NavLink>
+          {hasPermission("MANAGE_COMPANIES") && (
+            <NavLink
+              to="/companies"
+              className={navItemClass}
+            >
+              <Building2 className="nav-icon" />
+              <span>Companies</span>
+            </NavLink>
+          )}
 
-          <NavLink
-            to="/disposal-requests"
-            className={navItemClass}
-          >
-            <ClipboardList className="nav-icon" />
-            <span>Disposal Requests</span>
-          </NavLink>
+          {hasPermission("MANAGE_TENDERS") && (
+            <NavLink
+              to="/disposal-requests"
+              className={navItemClass}
+            >
+              <ClipboardList className="nav-icon" />
+              <span>Disposal Requests</span>
+            </NavLink>
+          )}
 
-          <NavLink
-            to="/users"
-            className={navItemClass}
-          >
-            <Users className="nav-icon" />
-            <span>Users</span>
-          </NavLink>
+          {isSuperAdmin && (
+            <NavLink
+              to="/users"
+              className={navItemClass}
+            >
+              <Users className="nav-icon" />
+              <span>Users</span>
+            </NavLink>
+          )}
         </div>
 
         {/* System */}
@@ -132,13 +142,15 @@ function Sidebar() {
             <span>Reports</span>
           </NavLink>
 
-          <NavLink
-            to="/settings"
-            className={navItemClass}
-          >
-            <Settings className="nav-icon" />
-            <span>Settings</span>
-          </NavLink>
+          {isSuperAdmin && (
+            <NavLink
+              to="/settings"
+              className={navItemClass}
+            >
+              <Settings className="nav-icon" />
+              <span>Settings</span>
+            </NavLink>
+          )}
         </div>
       </nav>
 
@@ -160,7 +172,7 @@ function Sidebar() {
               </span>
 
               <span className="sidebar-user-role">
-                {user?.email ?? ""}
+                {isSuperAdmin ? "Superadmin" : "User"}
               </span>
             </div>
           </button>

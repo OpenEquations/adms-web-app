@@ -38,6 +38,27 @@ export const TENDER_STATUS_LABELS = {
   OVER: "Concluded",
 };
 
+export const PERMISSIONS = [
+  "MANAGE_ITEMS",
+  "MANAGE_WAREHOUSES",
+  "MANAGE_COMPANIES",
+  "MANAGE_TENDERS",
+];
+
+export const PERMISSION_LABELS = {
+  MANAGE_ITEMS: "Items",
+  MANAGE_WAREHOUSES: "Warehouses",
+  MANAGE_COMPANIES: "Companies",
+  MANAGE_TENDERS: "Disposal Requests",
+};
+
+export const PERMISSION_DESCRIPTIONS = {
+  MANAGE_ITEMS: "View and manage assets",
+  MANAGE_WAREHOUSES: "View and manage storage locations",
+  MANAGE_COMPANIES: "View and manage repair/buyer companies",
+  MANAGE_TENDERS: "View and manage disposal requests",
+};
+
 export function statusToClassName(status) {
   return status ? status.toLowerCase().replace(/_/g, "-") : "";
 }

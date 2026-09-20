@@ -32,9 +32,9 @@ import TenderPoster from "./pages/Tenders/TenderPoster";
 
 import OrganizationSettings from "./pages/Settings/OrganizationSettings";
 
-function protect(element) {
+function protect(element, options = {}) {
   return (
-    <ProtectedRoute>
+    <ProtectedRoute {...options}>
       <DashboardLayout>{element}</DashboardLayout>
     </ProtectedRoute>
   );
@@ -57,72 +57,72 @@ function App() {
 
           <Route
             path="/items"
-            element={protect(<Items />)}
+            element={protect(<Items />, { permission: "MANAGE_ITEMS" })}
           />
           <Route
             path="/items/new"
-            element={protect(<AddItem />)}
+            element={protect(<AddItem />, { permission: "MANAGE_ITEMS" })}
           />
           <Route
             path="/items/:id/edit"
-            element={protect(<EditItem />)}
+            element={protect(<EditItem />, { permission: "MANAGE_ITEMS" })}
           />
 
           <Route
             path="/warehouses"
-            element={protect(<Warehouses />)}
+            element={protect(<Warehouses />, { permission: "MANAGE_WAREHOUSES" })}
           />
           <Route
             path="/warehouses/new"
-            element={protect(<AddWarehouse />)}
+            element={protect(<AddWarehouse />, { permission: "MANAGE_WAREHOUSES" })}
           />
           <Route
             path="/warehouses/:id"
-            element={protect(<WarehouseDetail />)}
+            element={protect(<WarehouseDetail />, { permission: "MANAGE_WAREHOUSES" })}
           />
 
           <Route
             path="/companies"
-            element={protect(<Companies />)}
+            element={protect(<Companies />, { permission: "MANAGE_COMPANIES" })}
           />
           <Route
             path="/companies/new"
-            element={protect(<AddCompany />)}
+            element={protect(<AddCompany />, { permission: "MANAGE_COMPANIES" })}
           />
           <Route
             path="/companies/:id/edit"
-            element={protect(<EditCompany />)}
+            element={protect(<EditCompany />, { permission: "MANAGE_COMPANIES" })}
           />
 
           <Route
             path="/users"
-            element={protect(<Users />)}
+            element={protect(<Users />, { superAdminOnly: true })}
           />
           <Route
             path="/users/new"
-            element={protect(<AddUser />)}
+            element={protect(<AddUser />, { superAdminOnly: true })}
           />
           <Route
             path="/users/:id/edit"
-            element={protect(<EditUser />)}
+            element={protect(<EditUser />, { superAdminOnly: true })}
           />
 
           <Route
             path="/disposal-requests"
-            element={protect(<Tenders />)}
+            element={protect(<Tenders />, { permission: "MANAGE_TENDERS" })}
           />
           <Route
             path="/disposal-requests/new"
-            element={protect(<AddTender />)}
+            element={protect(<AddTender />, { permission: "MANAGE_TENDERS" })}
           />
           <Route
             path="/disposal-requests/:id"
-            element={protect(<TenderDetail />)}
+            element={protect(<TenderDetail />, { permission: "MANAGE_TENDERS" })}
           />
           <Route
             path="/disposal-requests/:id/poster"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute permission="MANAGE_TENDERS">
                 <TenderPoster />
               </ProtectedRoute>
             }
@@ -140,7 +140,7 @@ function App() {
           />
           <Route
             path="/settings"
-            element={protect(<OrganizationSettings />)}
+            element={protect(<OrganizationSettings />, { superAdminOnly: true })}
           />
 
           <Route

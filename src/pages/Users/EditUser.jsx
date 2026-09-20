@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
-import { AlertCircle, ArrowLeft, CheckCircle2, KeyRound, UserPlus } from "lucide-react";
+import { AlertCircle, ArrowLeft, CheckCircle2, KeyRound, ShieldCheck, UserPlus } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { usersApi } from "../../lib/api/users";
 import { ApiError } from "../../lib/apiClient";
+import { useAuth } from "../../context/AuthContext";
+import { PERMISSIONS, PERMISSION_DESCRIPTIONS, PERMISSION_LABELS } from "../../lib/constants";
 
 import "./AddUser.css";
 
 function EditUser() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
 
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,15 +25,26 @@ function EditUser() {
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
 
+  const [role, setRole] = useState("USER");
+  const [permissions, setPermissions] = useState([]);
+  const [roleError, setRoleError] = useState("");
+  const [savingRole, setSavingRole] = useState(false);
+  const [pendingPermission, setPendingPermission] = useState(null);
+  const [permissionError, setPermissionError] = useState("");
+
+  const isEditingSelf = currentUser?.id === Number(id);
+
+  const loadUser = () =>
+    usersApi.getById(id).then((user) => {
+      setForm({ firstName: user.firstName, lastName: user.lastName, email: user.email });
+      setRole(user.role);
+      setPermissions(user.permissions ?? []);
+    });
+
   useEffect(() => {
     let cancelled = false;
 
-    usersApi
-      .getById(id)
-      .then((user) => {
-        if (cancelled) return;
-        setForm({ firstName: user.firstName, lastName: user.lastName, email: user.email });
-      })
+    loadUser()
       .catch((err) => {
         if (cancelled) return;
         setNotFound(true);
@@ -43,6 +57,7 @@ function EditUser() {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const updateField = (field) => (event) => {
@@ -81,6 +96,40 @@ function EditUser() {
       setPasswordError(err instanceof ApiError ? err.message : "Failed to change password.");
     } finally {
       setChangingPassword(false);
+    }
+  };
+
+  const handleRoleSubmit = async (event) => {
+    event.preventDefault();
+    setRoleError("");
+    setSavingRole(true);
+
+    try {
+      await usersApi.changeRole(id, role);
+      await loadUser();
+    } catch (err) {
+      setRoleError(err instanceof ApiError ? err.message : "Failed to change role.");
+    } finally {
+      setSavingRole(false);
+    }
+  };
+
+  const togglePermission = async (permission, currentlyGranted) => {
+    setPermissionError("");
+    setPendingPermission(permission);
+
+    try {
+      if (currentlyGranted) {
+        await usersApi.revokePermission(id, permission);
+        setPermissions((current) => current.filter((p) => p !== permission));
+      } else {
+        await usersApi.grantPermission(id, permission);
+        setPermissions((current) => [...current, permission]);
+      }
+    } catch (err) {
+      setPermissionError(err instanceof ApiError ? err.message : "Failed to update permission.");
+    } finally {
+      setPendingPermission(null);
     }
   };
 
@@ -207,6 +256,100 @@ function EditUser() {
           </div>
         </form>
       </div>
+
+      <div className="card user-form-card">
+        <div className="form-card-header">
+          <h2>Role</h2>
+          <p>
+            Superadmins have unrestricted access to every module and can manage other users.
+          </p>
+        </div>
+
+        {isEditingSelf && (
+          <div
+            className="banner"
+            role="status"
+            style={{ borderColor: "rgb(217 119 6 / 25%)", background: "rgb(217 119 6 / 6%)", color: "#92400e" }}
+          >
+            <AlertCircle />
+            <span>You're editing your own account. You can't demote yourself if you're the last superadmin.</span>
+          </div>
+        )}
+
+        <form onSubmit={handleRoleSubmit}>
+          {roleError && (
+            <div
+              className="banner banner-error"
+              role="alert"
+            >
+              <AlertCircle />
+              <span>{roleError}</span>
+            </div>
+          )}
+
+          <div className="form-group">
+            <select
+              className="input"
+              value={role}
+              onChange={(event) => setRole(event.target.value)}
+            >
+              <option value="USER">User</option>
+              <option value="SUPERADMIN">Superadmin</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-outline"
+            disabled={savingRole}
+          >
+            <ShieldCheck />
+            {savingRole ? "Saving..." : "Save role"}
+          </button>
+        </form>
+      </div>
+
+      {role !== "SUPERADMIN" && (
+        <div className="card user-form-card">
+          <div className="form-card-header">
+            <h2>Permissions</h2>
+            <p>Choose which sections of the system this user can access.</p>
+          </div>
+
+          {permissionError && (
+            <div
+              className="banner banner-error"
+              role="alert"
+            >
+              <AlertCircle />
+              <span>{permissionError}</span>
+            </div>
+          )}
+
+          <div className="permission-list">
+            {PERMISSIONS.map((permission) => {
+              const granted = permissions.includes(permission);
+              return (
+                <label
+                  key={permission}
+                  className="permission-item"
+                >
+                  <input
+                    type="checkbox"
+                    checked={granted}
+                    disabled={pendingPermission === permission}
+                    onChange={() => togglePermission(permission, granted)}
+                  />
+                  <div>
+                    <span className="permission-item-title">{PERMISSION_LABELS[permission]}</span>
+                    <span className="permission-item-description">{PERMISSION_DESCRIPTIONS[permission]}</span>
+                  </div>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="card user-form-card">
         <div className="form-card-header">

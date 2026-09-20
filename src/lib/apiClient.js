@@ -1,5 +1,15 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
 
+export const AUTH_TOKEN_STORAGE_KEY = "adms.authToken";
+
+function getStoredToken() {
+  try {
+    return localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
 export class ApiError extends Error {
   constructor(message, status, details = []) {
     super(message);
@@ -12,10 +22,15 @@ export class ApiError extends Error {
 async function request(path, { method = "GET", body } = {}) {
   let response;
 
+  const token = getStoredToken();
+  const headers = {};
+  if (body !== undefined) headers["Content-Type"] = "application/json";
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
   try {
     response = await fetch(`${BASE_URL}${path}`, {
       method,
-      headers: body !== undefined ? { "Content-Type": "application/json" } : undefined,
+      headers: Object.keys(headers).length ? headers : undefined,
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {

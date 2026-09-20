@@ -126,6 +126,17 @@
   font-weight: 500;
 }
 
+.role-badge-superadmin {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: rgb(146 64 14 / 20%);
+}
+
+.role-badge-user {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
 .user-email {
   color: var(--muted-foreground);
   font-size: 0.78rem;
