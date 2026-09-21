@@ -95,10 +95,11 @@ function TenderDetail() {
     setError("");
 
     try {
-      await Promise.all([
-        tendersApi.changeTitle(id, titleDraft),
-        tendersApi.changeDescription(id, descriptionDraft),
-      ]);
+      // Sequential, not Promise.all: each endpoint reads the full tender,
+      // changes one field, and writes the full record back (including its
+      // items list), so concurrent calls can let one revert the other.
+      await tendersApi.changeTitle(id, titleDraft);
+      await tendersApi.changeDescription(id, descriptionDraft);
       setTender((current) => ({ ...current, title: titleDraft, description: descriptionDraft }));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to save changes.");

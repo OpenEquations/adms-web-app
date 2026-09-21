@@ -12,6 +12,7 @@ const PAGE_INFO = [
   { match: /^\/dashboard/, title: "Dashboard", subtitle: "Overview of your Assets Disposal Management system" },
   { match: /^\/items\/new/, title: "Add Item", subtitle: "Register a new asset" },
   { match: /^\/items\/.+\/edit/, title: "Edit Item", subtitle: "Update this asset's details" },
+  { match: /^\/items\/.+\/health-history/, title: "Health History", subtitle: "Health trend for this asset over time" },
   { match: /^\/items/, title: "Items", subtitle: "Manage and track your organization's assets" },
   { match: /^\/warehouses\/new/, title: "Add Warehouse", subtitle: "Create a new storage location" },
   { match: /^\/warehouses\/.+/, title: "Warehouse", subtitle: "Warehouse details and allocated items" },
@@ -25,7 +26,7 @@ const PAGE_INFO = [
   { match: /^\/disposal-requests\/new/, title: "New Disposal Request", subtitle: "Create a repair or selling tender" },
   { match: /^\/disposal-requests\/.+/, title: "Disposal Request", subtitle: "Tender details, items and winner" },
   { match: /^\/disposal-requests/, title: "Disposal Requests", subtitle: "Manage repair and selling tenders" },
-  { match: /^\/reports/, title: "Reports", subtitle: "Reporting and analytics" },
+  { match: /^\/reports/, title: "Reports", subtitle: "Generate and review stock reports" },
   { match: /^\/settings/, title: "Settings", subtitle: "Organization profile used on printable documents" },
 ];
 

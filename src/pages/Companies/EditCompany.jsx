@@ -48,10 +48,11 @@ function EditCompany() {
     setSubmitting(true);
 
     try {
-      await Promise.all([
-        companiesApi.changeName(id, name),
-        companiesApi.changeEmail(id, email),
-      ]);
+      // Sequential, not Promise.all: each endpoint reads the full company,
+      // changes one field, and writes the full record back, so concurrent
+      // calls can let one silently revert the other via a stale snapshot.
+      await companiesApi.changeName(id, name);
+      await companiesApi.changeEmail(id, email);
       navigate("/companies");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");

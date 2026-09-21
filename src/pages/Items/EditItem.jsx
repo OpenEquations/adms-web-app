@@ -86,13 +86,16 @@ function EditItem() {
     setSubmitting(true);
 
     try {
-      await Promise.all([
-        itemsApi.changeName(id, form.itemName),
-        itemsApi.changeDescription(id, form.itemDescription),
-        itemsApi.changeStatus(id, form.itemStatus),
-        itemsApi.changeType(id, form.itemType),
-        itemsApi.changeHealth(id, Number(form.itemHealth)),
-      ]);
+      // Sequential, not Promise.all: each of these endpoints reads the full
+      // item, changes one field, and writes the full item back. Firing them
+      // concurrently lets a later write silently revert an earlier one using
+      // a stale snapshot - awaiting each in turn means every write starts
+      // from the state the previous one just committed.
+      await itemsApi.changeName(id, form.itemName);
+      await itemsApi.changeDescription(id, form.itemDescription);
+      await itemsApi.changeStatus(id, form.itemStatus);
+      await itemsApi.changeType(id, form.itemType);
+      await itemsApi.changeHealth(id, Number(form.itemHealth));
 
       if (form.warehouseId !== originalWarehouseId) {
         if (originalWarehouseId) {

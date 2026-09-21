@@ -188,6 +188,21 @@
   min-width: 110px;
 }
 
+.item-health-button {
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  padding: 0.3rem 0.4rem;
+  margin: 0 -0.4rem;
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.item-health-button:hover {
+  border-color: var(--border);
+  background: var(--muted);
+}
+
 .health-bar {
   width: 60px;
   height: 5px;

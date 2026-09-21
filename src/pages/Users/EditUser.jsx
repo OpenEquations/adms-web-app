@@ -70,10 +70,11 @@ function EditUser() {
     setSubmitting(true);
 
     try {
-      await Promise.all([
-        usersApi.changeName(id, form.firstName, form.lastName),
-        usersApi.changeEmail(id, form.email),
-      ]);
+      // Sequential, not Promise.all: each endpoint reads the full user,
+      // changes one field, and writes the full record back, so concurrent
+      // calls can let one silently revert the other via a stale snapshot.
+      await usersApi.changeName(id, form.firstName, form.lastName);
+      await usersApi.changeEmail(id, form.email);
       navigate("/users");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");

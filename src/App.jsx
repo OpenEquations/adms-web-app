@@ -1,4 +1,3 @@
-import { BarChart3 } from "lucide-react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { AuthProvider } from "./context/AuthContext";
@@ -7,7 +6,6 @@ import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout/DashboardLayout";
 import Login from "./pages/Login/Login";
 import Dashboard from "./pages/Dashboard/Dashboard";
-import ComingSoon from "./pages/ComingSoon/ComingSoon";
 
 import Warehouses from "./pages/Warehouses/Warehouses";
 import AddWarehouse from "./pages/Warehouses/AddWarehouse";
@@ -16,6 +14,7 @@ import WarehouseDetail from "./pages/Warehouses/WarehouseDetail";
 import Items from "./pages/Items/Items";
 import AddItem from "./pages/Items/AddItem";
 import EditItem from "./pages/Items/EditItem";
+import ItemHealthHistory from "./pages/Items/ItemHealthHistory";
 
 import Companies from "./pages/Companies/Companies";
 import AddCompany from "./pages/Companies/AddCompany";
@@ -31,6 +30,9 @@ import TenderDetail from "./pages/Tenders/TenderDetail";
 import TenderPoster from "./pages/Tenders/TenderPoster";
 
 import OrganizationSettings from "./pages/Settings/OrganizationSettings";
+
+import Reports from "./pages/Reports/Reports";
+import StockReportView from "./pages/Reports/StockReportView";
 
 function protect(element, options = {}) {
   return (
@@ -66,6 +68,10 @@ function App() {
           <Route
             path="/items/:id/edit"
             element={protect(<EditItem />, { permission: "MANAGE_ITEMS" })}
+          />
+          <Route
+            path="/items/:id/health-history"
+            element={protect(<ItemHealthHistory />, { permission: "MANAGE_ITEMS" })}
           />
 
           <Route
@@ -130,13 +136,15 @@ function App() {
 
           <Route
             path="/reports"
-            element={protect(
-              <ComingSoon
-                icon={BarChart3}
-                title="Reports"
-                description="Reporting and analytics are on the roadmap. Check back soon."
-              />,
-            )}
+            element={protect(<Reports />)}
+          />
+          <Route
+            path="/reports/:id"
+            element={
+              <ProtectedRoute>
+                <StockReportView />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/settings"

@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
   Edit,
+  Activity,
   Inbox,
+  LineChart,
   Package,
   Plus,
   Search,
@@ -15,6 +17,7 @@ import { warehousesApi } from "../../lib/api/warehouses";
 import { ApiError } from "../../lib/apiClient";
 import { ITEM_STATUS_LABELS, ITEM_TYPE_LABELS, statusToClassName } from "../../lib/constants";
 import ActionsMenu from "../../components/ActionsMenu/ActionsMenu";
+import UpdateHealthModal from "../../components/UpdateHealthModal/UpdateHealthModal";
 
 import "./Items.css";
 
@@ -24,6 +27,7 @@ function Items() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [healthModalItem, setHealthModalItem] = useState(null);
 
   const loadItems = async () => {
     setLoading(true);
@@ -198,7 +202,12 @@ function Items() {
 
                       {/* Health */}
                       <td>
-                        <div className="item-health">
+                        <button
+                          type="button"
+                          className="item-health item-health-button"
+                          onClick={() => setHealthModalItem(item)}
+                          aria-label={`Update health for ${item.itemName}`}
+                        >
                           <div className="health-bar">
                             <div
                               className="health-bar-fill"
@@ -209,7 +218,7 @@ function Items() {
                           </div>
 
                           <span>{item.itemHealth}%</span>
-                        </div>
+                        </button>
                       </td>
 
                       {/* Warehouse */}
@@ -235,6 +244,23 @@ function Items() {
                           >
                             <Edit />
                             Edit
+                          </Link>
+
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() => setHealthModalItem(item)}
+                          >
+                            <Activity />
+                            Update Health
+                          </button>
+
+                          <Link
+                            to={`/items/${item.id}/health-history`}
+                            className="dropdown-item"
+                          >
+                            <LineChart />
+                            Health History
                           </Link>
 
                           <button
@@ -266,6 +292,20 @@ function Items() {
           </>
         )}
       </div>
+
+      {healthModalItem && (
+        <UpdateHealthModal
+          item={healthModalItem}
+          onClose={() => setHealthModalItem(null)}
+          onUpdated={(newHealth) => {
+            setItems((current) =>
+              current.map((existing) =>
+                existing.id === healthModalItem.id ? { ...existing, itemHealth: newHealth } : existing,
+              ),
+            );
+          }}
+        />
+      )}
     </div>
   );
 }
