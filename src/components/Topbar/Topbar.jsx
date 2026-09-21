@@ -1,8 +1,11 @@
+import { useState } from "react";
 import {
   Bell,
+  ChevronDown,
+  LogOut,
   Search,
 } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext";
 
@@ -44,9 +47,16 @@ function initials(user) {
 }
 
 function Topbar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const { title, subtitle } = resolvePageInfo(location.pathname);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <header className="topbar">
@@ -86,20 +96,51 @@ function Topbar() {
         <div className="topbar-divider" />
 
         {/* User */}
-        <div className="topbar-user">
-          <div className="avatar avatar-sm">
-            {initials(user)}
-          </div>
+        <div className="dropdown topbar-user-dropdown">
+          <button
+            type="button"
+            className="topbar-user"
+            onClick={() => setMenuOpen((value) => !value)}
+          >
+            <div className="avatar avatar-sm">
+              {initials(user)}
+            </div>
 
-          <div className="topbar-user-info">
-            <span>
-              {user ? `${user.firstName} ${user.lastName}` : "Guest"}
-            </span>
+            <div className="topbar-user-info">
+              <span>
+                {user ? `${user.firstName} ${user.lastName}` : "Guest"}
+              </span>
 
-            <small>
-              {user?.email ?? ""}
-            </small>
-          </div>
+              <small>
+                {user?.email ?? ""}
+              </small>
+            </div>
+
+            <ChevronDown className="topbar-chevron" />
+          </button>
+
+          {menuOpen && (
+            <>
+              <button
+                type="button"
+                className="dropdown-backdrop"
+                aria-hidden="true"
+                tabIndex={-1}
+                onClick={() => setMenuOpen(false)}
+              />
+
+              <div className="dropdown-menu topbar-user-menu">
+                <button
+                  type="button"
+                  className="dropdown-item dropdown-item-destructive"
+                  onClick={handleLogout}
+                >
+                  <LogOut />
+                  Log out
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </header>
