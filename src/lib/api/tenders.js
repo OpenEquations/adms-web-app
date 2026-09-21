@@ -10,6 +10,7 @@ export const tendersApi = {
   changeDescription: (id, description) =>
     api.patch(`/tenders/${id}/description`, { description }),
   changeStatus: (id, status) => api.patch(`/tenders/${id}/status`, { status }),
+  changeDeadline: (id, deadline) => api.patch(`/tenders/${id}/deadline`, { deadline }),
   setWinner: (id, companyId) => api.patch(`/tenders/${id}/winner`, { companyId }),
   conclude: (id, companyId) => api.post(`/tenders/${id}/conclude`, { companyId }),
   remove: (id) => api.delete(`/tenders/${id}`),

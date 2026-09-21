@@ -23,6 +23,7 @@ import EditCompany from "./pages/Companies/EditCompany";
 import Users from "./pages/Users/Users";
 import AddUser from "./pages/Users/AddUser";
 import EditUser from "./pages/Users/EditUser";
+import MyAccount from "./pages/Account/MyAccount";
 
 import Tenders from "./pages/Tenders/Tenders";
 import AddTender from "./pages/Tenders/AddTender";
@@ -98,6 +99,11 @@ function App() {
           <Route
             path="/companies/:id/edit"
             element={protect(<EditCompany />, { permission: "MANAGE_COMPANIES" })}
+          />
+
+          <Route
+            path="/account"
+            element={protect(<MyAccount />)}
           />
 
           <Route

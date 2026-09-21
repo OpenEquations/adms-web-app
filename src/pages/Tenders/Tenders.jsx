@@ -17,6 +17,18 @@ import ActionsMenu from "../../components/ActionsMenu/ActionsMenu";
 
 import "./Tenders.css";
 
+function formatDeadline(isoString) {
+  if (!isoString) {
+    return "No deadline";
+  }
+  return new Date(isoString).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 function Tenders() {
   const [tenders, setTenders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -128,6 +140,7 @@ function Tenders() {
                   <th>Type</th>
                   <th>Items</th>
                   <th>Winner</th>
+                  <th>Deadline</th>
                   <th>Status</th>
                   <th className="actions-column">Actions</th>
                 </tr>
@@ -166,6 +179,12 @@ function Tenders() {
                     <td>
                       <span className="tender-winner">
                         {tender.tenderWinner?.name ?? "—"}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span className="tender-deadline">
+                        {formatDeadline(tender.deadline)}
                       </span>
                     </td>
 

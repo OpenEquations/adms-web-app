@@ -97,6 +97,12 @@
   font-weight: 500;
 }
 
+.tender-form-card .form-hint {
+  margin-top: 0.35rem;
+  color: var(--muted-foreground);
+  font-size: 0.72rem;
+}
+
 .tender-form-card .textarea {
   height: auto;
   min-height: 96px;

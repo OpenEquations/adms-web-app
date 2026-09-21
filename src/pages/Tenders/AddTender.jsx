@@ -14,6 +14,7 @@ function AddTender() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState("");
+  const [deadline, setDeadline] = useState("");
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState([]);
   const [submitting, setSubmitting] = useState(false);
@@ -25,7 +26,12 @@ function AddTender() {
     setSubmitting(true);
 
     try {
-      const created = await tendersApi.create({ title, description, type: type || null });
+      const created = await tendersApi.create({
+        title,
+        description,
+        type: type || null,
+        deadline: deadline || null,
+      });
       navigate(`/disposal-requests/${created.id}`);
     } catch (err) {
       if (err instanceof ApiError) {
@@ -110,6 +116,20 @@ function AddTender() {
               value={description}
               onChange={(event) => setDescription(event.target.value)}
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="tender-deadline">Deadline</label>
+            <input
+              id="tender-deadline"
+              type="datetime-local"
+              className="input"
+              value={deadline}
+              onChange={(event) => setDeadline(event.target.value)}
+            />
+            <p className="form-hint">
+              Optional for now, but required before this request can be published.
+            </p>
           </div>
 
           <div className="form-group">

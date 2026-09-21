@@ -4,8 +4,9 @@ import {
   ChevronDown,
   LogOut,
   Search,
+  User,
 } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext";
 
@@ -30,6 +31,7 @@ const PAGE_INFO = [
   { match: /^\/disposal-requests\/.+/, title: "Disposal Request", subtitle: "Tender details, items and winner" },
   { match: /^\/disposal-requests/, title: "Disposal Requests", subtitle: "Manage repair and selling tenders" },
   { match: /^\/reports/, title: "Reports", subtitle: "Generate and review stock reports" },
+  { match: /^\/account/, title: "My Account", subtitle: "Manage your personal information and credentials" },
   { match: /^\/settings/, title: "Settings", subtitle: "Organization profile used on printable documents" },
 ];
 
@@ -130,6 +132,15 @@ function Topbar() {
               />
 
               <div className="dropdown-menu topbar-user-menu">
+                <Link
+                  to="/account"
+                  className="dropdown-item"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <User />
+                  My Account
+                </Link>
+
                 <button
                   type="button"
                   className="dropdown-item dropdown-item-destructive"

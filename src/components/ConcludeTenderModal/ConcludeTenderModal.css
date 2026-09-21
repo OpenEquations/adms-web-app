@@ -1,0 +1,17 @@
+.conclude-tender-name {
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.conclude-tender-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.conclude-tender-form-group label {
+  margin-bottom: 0.4rem;
+  color: var(--foreground);
+  font-size: 0.8rem;
+  font-weight: 500;
+}

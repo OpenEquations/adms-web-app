@@ -160,7 +160,14 @@
   width: 100%;
 }
 
-.sidebar-user-menu {
+/*
+ * Overrides .dropdown-menu's default downward-opening `top`. Qualified with
+ * .dropdown-menu (not just .sidebar-user-menu alone) so this reliably wins
+ * on specificity rather than depending on CSS source order between this
+ * file and components.css - a tie that has flipped before as new
+ * component stylesheets shifted the bundle's cascade order.
+ */
+.dropdown-menu.sidebar-user-menu {
   top: auto;
   right: 0;
   bottom: calc(100% + 6px);

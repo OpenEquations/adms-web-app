@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
   ArrowLeft,
+  CalendarClock,
   CheckCircle2,
   ClipboardList,
   Package,
@@ -23,8 +24,22 @@ import {
   TENDER_TYPE_LABELS,
   statusToClassName,
 } from "../../lib/constants";
+import ConcludeTenderModal from "../../components/ConcludeTenderModal/ConcludeTenderModal";
 
 import "./TenderDetail.css";
+
+function formatDeadline(isoString) {
+  if (!isoString) {
+    return null;
+  }
+  return new Date(isoString).toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 function TenderDetail() {
   const { id } = useParams();
@@ -46,9 +61,12 @@ function TenderDetail() {
   const [statusDraft, setStatusDraft] = useState("");
   const [savingStatus, setSavingStatus] = useState(false);
 
+  const [deadlineDraft, setDeadlineDraft] = useState("");
+  const [savingDeadline, setSavingDeadline] = useState(false);
+
   const [winnerId, setWinnerId] = useState("");
   const [savingWinner, setSavingWinner] = useState(false);
-  const [concluding, setConcluding] = useState(false);
+  const [concludeModalOpen, setConcludeModalOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -67,6 +85,7 @@ function TenderDetail() {
       setTitleDraft(tenderData.title);
       setDescriptionDraft(tenderData.description ?? "");
       setStatusDraft(tenderData.status);
+      setDeadlineDraft(tenderData.deadline ? tenderData.deadline.slice(0, 16) : "");
       setWinnerId(tenderData.tenderWinner ? String(tenderData.tenderWinner.id) : "");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to load disposal request.");
@@ -128,8 +147,33 @@ function TenderDetail() {
     }
   };
 
+  const handleDeadlineSave = async (event) => {
+    event.preventDefault();
+    if (!deadlineDraft) {
+      return;
+    }
+
+    setSavingDeadline(true);
+    setError("");
+
+    try {
+      await tendersApi.changeDeadline(id, deadlineDraft);
+      setTender((current) => ({ ...current, deadline: deadlineDraft }));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to save deadline.");
+    } finally {
+      setSavingDeadline(false);
+    }
+  };
+
   const handleStatusSave = async (event) => {
     event.preventDefault();
+
+    if (statusDraft === "PUBLISHED" && !tender.deadline) {
+      setError("Set a deadline before publishing this disposal request.");
+      return;
+    }
+
     setSavingStatus(true);
     setError("");
 
@@ -159,29 +203,6 @@ function TenderDetail() {
       setError(err instanceof ApiError ? err.message : "Failed to set winner.");
     } finally {
       setSavingWinner(false);
-    }
-  };
-
-  const handleConclude = async () => {
-    if (!winnerId) {
-      window.alert("Select a winning company first.");
-      return;
-    }
-
-    if (!window.confirm("Conclude this disposal request? This sets its status to Concluded.")) {
-      return;
-    }
-
-    setConcluding(true);
-    setError("");
-
-    try {
-      await tendersApi.conclude(id, winnerId);
-      await load();
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Failed to conclude disposal request.");
-    } finally {
-      setConcluding(false);
     }
   };
 
@@ -397,12 +418,45 @@ function TenderDetail() {
         <div className="tender-detail-side">
           <div className="card">
             <div className="form-card-header">
+              <h2>Deadline</h2>
+              <p>
+                {tender.deadline
+                  ? `Closes ${formatDeadline(tender.deadline)}`
+                  : "No deadline set yet - required before this request can be published."}
+              </p>
+            </div>
+
+            <form onSubmit={handleDeadlineSave}>
+              <div className="form-group">
+                <input
+                  id="tender-deadline-input"
+                  type="datetime-local"
+                  className="input"
+                  value={deadlineDraft}
+                  onChange={(event) => setDeadlineDraft(event.target.value)}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="btn btn-outline"
+                disabled={savingDeadline || !deadlineDraft}
+              >
+                <CalendarClock />
+                {savingDeadline ? "Saving..." : "Save deadline"}
+              </button>
+            </form>
+          </div>
+
+          <div className="card">
+            <div className="form-card-header">
               <h2>Status</h2>
             </div>
 
             <form onSubmit={handleStatusSave}>
               <div className="form-group">
                 <select
+                  id="tender-status-select"
                   className="input"
                   value={statusDraft}
                   onChange={(event) => setStatusDraft(event.target.value)}
@@ -469,11 +523,11 @@ function TenderDetail() {
               <button
                 type="button"
                 className="btn btn-primary"
-                disabled={!winnerId || concluding}
-                onClick={handleConclude}
+                disabled={tender.status === "OVER"}
+                onClick={() => setConcludeModalOpen(true)}
               >
                 <CheckCircle2 />
-                {concluding ? "Concluding..." : "Conclude"}
+                Conclude
               </button>
             </div>
           </div>
@@ -494,6 +548,20 @@ function TenderDetail() {
           </div>
         </div>
       </div>
+
+      {concludeModalOpen && (
+        <ConcludeTenderModal
+          tender={tender}
+          companies={companies}
+          onClose={() => setConcludeModalOpen(false)}
+          onConcluded={() => {
+            load().catch(() => {
+              // Conclusion was saved; a stale view just means a manual
+              // refresh is needed, so this failure isn't worth surfacing.
+            });
+          }}
+        />
+      )}
     </div>
   );
 }

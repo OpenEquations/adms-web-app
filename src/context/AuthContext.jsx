@@ -51,6 +51,17 @@ export function AuthProvider({ children }) {
     return loggedInUser;
   };
 
+  const updateUser = (changes) => {
+    setUser((current) => {
+      if (!current) {
+        return current;
+      }
+      const updated = { ...current, ...changes };
+      writeStoredUser(updated);
+      return updated;
+    });
+  };
+
   const logout = async () => {
     try {
       await authApi.logout();
@@ -74,6 +85,7 @@ export function AuthProvider({ children }) {
     hasPermission,
     login,
     logout,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

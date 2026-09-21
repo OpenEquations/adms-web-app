@@ -137,6 +137,11 @@
   font-size: 0.78rem;
 }
 
+.tender-deadline {
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+}
+
 .tender-item-count {
   font-size: 0.8rem;
   font-weight: 500;

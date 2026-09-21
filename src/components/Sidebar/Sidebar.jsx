@@ -7,11 +7,12 @@ import {
   LogOut,
   Package,
   Settings,
+  User,
   Users,
   Warehouse as WarehouseIcon,
 } from "lucide-react";
 
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext";
 
@@ -188,6 +189,15 @@ function Sidebar() {
               />
 
               <div className="dropdown-menu sidebar-user-menu">
+                <Link
+                  to="/account"
+                  className="dropdown-item"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <User />
+                  My Account
+                </Link>
+
                 <button
                   type="button"
                   className="dropdown-item dropdown-item-destructive"
